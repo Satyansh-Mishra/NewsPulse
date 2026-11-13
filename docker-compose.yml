@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: newspulse-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: newspulse
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d newspulse"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: newspulse-chromadb
+    restart: always
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+
+  nlp_worker:
+    build:
+      context: ./nlp_worker
+      dockerfile: Dockerfile
+    container_name: newspulse-nlp-worker
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - CHROMA_PERSIST_DIR=/app/chroma_db
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - GROQ_MODEL=${GROQ_MODEL:-openai/gpt-oss-120b}
+    volumes:
+      - ./nlp_worker/chroma_db:/app/chroma_db
+    depends_on:
+      - chromadb
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: newspulse-server
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/newspulse?schema=public
+      - PORT=5000
+      - NLP_WORKER_URL=http://nlp_worker:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nlp_worker:
+        condition: service_started
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: newspulse-client
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
+
+volumes:
+  postgres_data:
+  chroma_data:
+

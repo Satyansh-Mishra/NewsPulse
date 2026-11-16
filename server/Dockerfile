@@ -2,6 +2,8 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+RUN apk add --no-cache openssl
+
 COPY package*.json ./
 COPY tsconfig.json ./
 COPY prisma ./prisma/
@@ -16,6 +18,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+RUN apk add --no-cache openssl
+
 COPY package*.json ./
 COPY prisma ./prisma/
 
@@ -26,5 +30,4 @@ COPY --from=builder /app/dist ./dist
 
 EXPOSE 5000
 
-CMD ["node", "dist/server.js"]
-
+CMD ["sh", "-c", "npx prisma db push && node dist/server.js"]

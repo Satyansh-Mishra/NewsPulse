@@ -6,7 +6,7 @@ const NLP_WORKER_URL = process.env.NLP_WORKER_URL || "http://localhost:8000";
 
 export async function chatQuery(req: Request, res: Response): Promise<void> {
   try {
-    const { query, top_k = 5 } = req.body;
+    const { query, top_k = 5, history = [] } = req.body;
     if (!query || typeof query !== "string" || !query.trim()) {
       res.status(400).json({ error: "A valid query string is required" });
       return;
@@ -17,9 +17,10 @@ export async function chatQuery(req: Request, res: Response): Promise<void> {
         `${NLP_WORKER_URL}/rag-query`,
         {
           query: query.trim(),
-          top_k: Math.min(10, Math.max(1, Number(top_k)))
+          top_k: Math.min(10, Math.max(1, Number(top_k))),
+          history
         },
-        { timeout: 15000 }
+        { timeout: 20000 }
       );
 
       if (nlpRes.status === 200 && nlpRes.data) {
@@ -69,7 +70,7 @@ export async function chatQuery(req: Request, res: Response): Promise<void> {
 
       res.json({
         query,
-        answer: `Synthesizing ${matched.length} relevant reports on "${query}":\n\n${synthesis}`,
+        answer: `${history.length > 0 ? "Continuing our conversation — " : ""}Synthesizing ${matched.length} relevant reports on "${query}":\n\n${synthesis}`,
         citations,
         confidence_score: 0.82
       });

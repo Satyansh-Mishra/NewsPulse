@@ -88,9 +88,14 @@ class TopicCluster(BaseModel):
     sample_titles: List[str]
     sample_article_ids: List[str]
 
+class ConversationTurn(BaseModel):
+    role: str
+    content: str
+
 class RAGRequest(BaseModel):
     query: str
     top_k: Optional[int] = Field(default=5, ge=1, le=20)
+    history: Optional[List[ConversationTurn]] = Field(default_factory=list)
 
 class SourceCitation(BaseModel):
     citation_id: int
@@ -326,15 +331,19 @@ def rag_query(payload: RAGRequest):
             )
             prompt_content = f"Question: {payload.query}\n\nSources:\n" + "\n\n".join(context_chunks)
 
+            history_msgs = [{"role": t.role, "content": t.content} for t in (payload.history or [])]
+            messages = [
+                {"role": "system", "content": system_prompt},
+                *history_msgs,
+                {"role": "user", "content": prompt_content}
+            ]
+
             llm_res = requests.post(
                 "https://api.groq.com/openai/v1/chat/completions",
                 headers=headers,
                 json={
                     "model": groq_model,
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": prompt_content}
-                    ],
+                    "messages": messages,
                     "temperature": 0.2
                 },
                 timeout=15

@@ -13,56 +13,16 @@ const parser = new Parser({
 
 const NLP_WORKER_URL = process.env.NLP_WORKER_URL || "http://localhost:8000";
 
-export const DEFAULT_FEEDS = [
-  {
-    name: "TechCrunch",
-    url: "https://techcrunch.com/feed/",
-    category: "Tech"
-  },
-  {
-    name: "Wired",
-    url: "https://www.wired.com/feed/rss",
-    category: "Tech"
-  },
-  {
-    name: "BBC World",
-    url: "https://feeds.bbci.co.uk/news/world/rss.xml",
-    category: "World"
-  },
-  {
-    name: "NPR News",
-    url: "https://feeds.npr.org/1001/rss.xml",
-    category: "World"
-  },
-  {
-    name: "CNBC Business",
-    url: "https://search.cnbc.com/rs/search/view.html?partnerId=2000&keywords=business&output=rss",
-    category: "Business"
-  },
-  {
-    name: "The Verge",
-    url: "https://www.theverge.com/rss/index.xml",
-    category: "Tech"
-  }
+const HARDCODED_FEEDS = [
+  { name: "BBC News", url: "http://feeds.bbci.co.uk/news/rss.xml", category: "World" },
+  { name: "Reuters", url: "https://feeds.reuters.com/reuters/topNews", category: "World" },
+  { name: "TechCrunch", url: "https://techcrunch.com/feed/", category: "Tech" },
+  { name: "The Verge", url: "https://www.theverge.com/rss/index.xml", category: "Tech" },
+  { name: "Bloomberg", url: "https://feeds.bloomberg.com/markets/news.rss", category: "Business" },
+  { name: "Hacker News", url: "https://hnrss.org/frontpage", category: "Tech" },
+  { name: "NPR News", url: "https://feeds.npr.org/1001/rss.xml", category: "World" },
+  { name: "Ars Technica", url: "https://feeds.arstechnica.com/arstechnica/index", category: "Tech" },
 ];
-
-export async function seedDefaultFeeds(): Promise<void> {
-  const count = await prisma.feedSource.count();
-  if (count === 0) {
-    for (const feed of DEFAULT_FEEDS) {
-      await prisma.feedSource.upsert({
-        where: { url: feed.url },
-        update: {},
-        create: {
-          name: feed.name,
-          url: feed.url,
-          category: feed.category,
-          active: true
-        }
-      });
-    }
-  }
-}
 
 export interface IngestionResult {
   totalFeedsProcessed: number;
@@ -174,18 +134,14 @@ export async function ingestFeed(feedSource: { id: string; name: string; url: st
 }
 
 export async function ingestAllFeeds(): Promise<IngestionResult> {
-  await seedDefaultFeeds();
-
-  const activeFeeds = await prisma.feedSource.findMany({
-    where: { active: true }
-  });
+  const activeFeeds = HARDCODED_FEEDS;
 
   let totalIngested = 0;
   let totalSkipped = 0;
   const errors: string[] = [];
 
   for (const feed of activeFeeds) {
-    const res = await ingestFeed(feed);
+    const res = await ingestFeed({ id: feed.url, ...feed });
     totalIngested += res.ingested;
     totalSkipped += res.skipped;
     if (res.error) {

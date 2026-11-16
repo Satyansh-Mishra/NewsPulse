@@ -83,35 +83,35 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-7">
       <div>
-        <div className="flex items-center space-x-2 text-indigo-400 text-xs font-mono font-medium uppercase tracking-wider mb-1">
+        <div className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.15em] text-indigo-700">
           <GitCompare className="w-4 h-4" />
-          <span>Cross-Publisher Narrative Lens</span>
+          <span>Publisher perspective</span>
         </div>
-        <h1 className="text-2xl font-black text-white tracking-tight">
-          Coverage Comparison & Narrative Bias Analyzer
+        <h1 className="text-3xl font-bold tracking-[-0.05em] text-slate-950 sm:text-4xl">
+          Compare the coverage
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-1">
-          Deconstruct how different news organizations frame identical storylines, examine sentiment divergence, and detect narrative bias.
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+          See how different publishers cover the same subject, from tone and framing to the details they emphasize.
         </p>
       </div>
 
-      <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 shadow-lg backdrop-blur-sm space-y-3">
+      <div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_8px_24px_rgba(15,23,42,0.04)] sm:p-5">
         <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2.5">
           <div className="relative flex-1">
-            <Search className="absolute inset-y-0 left-3.5 my-auto w-4 h-4 text-slate-400" />
+            <Search className="absolute inset-y-0 left-3.5 my-auto h-4 w-4 text-slate-400" />
             <input
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Enter story topic to compare (e.g. OpenAI, Inflation, Electric Vehicles)..."
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              placeholder="Search a topic, company or event..."
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10"
             />
           </div>
           <button
             type="submit"
-            className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-500/20 transition-colors flex items-center justify-center space-x-1.5"
+            className="flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-xs font-semibold text-white transition-colors hover:bg-indigo-700"
           >
             <GitCompare className="w-4 h-4" />
             <span>Analyze Topic</span>
@@ -119,7 +119,7 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
         </form>
 
         <div className="flex flex-wrap items-center gap-1.5 pt-1">
-          <span className="text-[11px] font-mono text-slate-500 mr-1">Trending Topics:</span>
+          <span className="mr-1 text-[11px] font-semibold text-slate-500">Try a topic</span>
           {PRESET_TOPICS.map((preset) => (
             <button
               key={preset}
@@ -129,8 +129,8 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
               }}
               className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
                 topic.toLowerCase() === preset.toLowerCase()
-                  ? "bg-indigo-600 text-white shadow-sm"
-                  : "bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800"
+                  ? "bg-indigo-50 text-indigo-800 ring-1 ring-inset ring-indigo-200"
+                  : "border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
               }`}
             >
               {preset}
@@ -142,34 +142,34 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
       {loading ? (
         <div className="py-20 text-center space-y-3">
           <div className="w-8 h-8 mx-auto border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs text-slate-400">Comparing editorial angles and calculating narrative scores...</p>
+          <p className="text-xs text-slate-500">Comparing publisher coverage...</p>
         </div>
       ) : !data || data.totalArticles === 0 ? (
-        <div className="py-16 text-center bg-slate-900/30 border border-slate-800 rounded-2xl p-8 space-y-2">
-          <AlertCircle className="w-8 h-8 text-slate-500 mx-auto" />
-          <h3 className="text-base font-bold text-slate-200">No coverage found for "{topic}"</h3>
-          <p className="text-xs text-slate-400 max-w-md mx-auto">
+        <div className="space-y-2 rounded-2xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm">
+          <AlertCircle className="mx-auto h-8 w-8 text-slate-400" />
+          <h3 className="text-base font-bold text-slate-900">No coverage found for "{topic}"</h3>
+          <p className="mx-auto max-w-md text-xs leading-5 text-slate-500">
             Try searching for a broader topic like "Tech", "Business", or click "Sync Feeds" to fetch latest reports.
           </p>
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="bg-gradient-to-r from-indigo-950/40 via-slate-900/80 to-slate-900/60 border border-indigo-500/20 rounded-2xl p-5 shadow-lg backdrop-blur-sm">
-            <div className="flex items-center space-x-2 text-indigo-400 text-xs font-mono font-semibold mb-2">
+          <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50 via-white to-teal-50/60 p-5 shadow-[0_8px_24px_rgba(15,23,42,0.04)] sm:p-6">
+            <div className="mb-2 flex items-center gap-2 text-xs font-bold text-indigo-800">
               <Sparkles className="w-4 h-4" />
-              <span>Cross-Publisher Synthesis on "{data.topic}"</span>
+              <span>Coverage overview · {data.topic}</span>
             </div>
-            <p className="text-sm text-slate-200 leading-relaxed font-normal">
+            <p className="text-sm leading-7 text-slate-700">
               {data.summaryAnalysis}
             </p>
 
             {data.consensusEntities.length > 0 && (
-              <div className="mt-4 pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-2">
-                <span className="text-xs font-mono text-slate-400">Consensus Entities:</span>
+              <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-indigo-100 pt-4">
+                <span className="text-xs font-semibold text-slate-600">Common entities</span>
                 {data.consensusEntities.slice(0, 6).map((e) => (
                   <span
                     key={e.name}
-                    className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20"
+                    className="inline-flex items-center rounded-full border border-indigo-100 bg-white px-2.5 py-1 text-xs font-medium text-indigo-800"
                   >
                     {e.name} ({e.count})
                   </span>
@@ -178,13 +178,13 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
             )}
           </div>
 
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-5 shadow-lg backdrop-blur-sm">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.04)] sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-sm font-bold text-white">Editorial Tone & Sentiment Comparison</h2>
-                <p className="text-xs text-slate-400">Average sentiment polarity score per publishing outlet (-1.0 to +1.0)</p>
+                <h2 className="text-base font-bold tracking-tight text-slate-950">Sentiment by publisher</h2>
+                <p className="mt-1 text-xs text-slate-500">Average story sentiment from -1.0 to +1.0</p>
               </div>
-              <span className="text-xs font-mono text-indigo-400">{data.publishers.length} Publishers</span>
+              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">{data.publishers.length} publishers</span>
             </div>
 
             <div className="h-60 w-full">
@@ -193,16 +193,17 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
                   data={data.sentimentComparison}
                   margin={{ top: 20, right: 30, left: 10, bottom: 5 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                  <XAxis dataKey="source" stroke="#cbd5e1" tick={{ fontSize: 11 }} />
-                  <YAxis domain={[-1, 1]} stroke="#64748b" tick={{ fontSize: 11 }} />
-                  <ReferenceLine y={0} stroke="#475569" strokeWidth={1.5} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="source" stroke="#94a3b8" tick={{ fontSize: 11 }} />
+                  <YAxis domain={[-1, 1]} stroke="#94a3b8" tick={{ fontSize: 11 }} />
+                  <ReferenceLine y={0} stroke="#cbd5e1" strokeWidth={1.5} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#0f172a",
-                      borderColor: "#334155",
+                      backgroundColor: "#ffffff",
+                      borderColor: "#e2e8f0",
                       borderRadius: "0.5rem",
-                      fontSize: "0.75rem"
+                      fontSize: "0.75rem",
+                      boxShadow: "0 8px 24px rgba(15,23,42,0.12)"
                     }}
                     formatter={(val: number) => [`${val > 0 ? "+" : ""}${val.toFixed(2)}`, "Sentiment Index"]}
                   />
@@ -222,8 +223,8 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
           </div>
 
           <div>
-            <h2 className="text-sm font-bold text-white mb-3">
-              Side-by-Side Publisher Breakdown ({data.publishers.length} Outlets)
+            <h2 className="mb-3 text-base font-bold tracking-tight text-slate-950">
+              Publisher breakdown <span className="ml-1 text-xs font-medium text-slate-500">({data.publishers.length})</span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -234,28 +235,28 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
                 return (
                   <div
                     key={pub.source}
-                    className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 space-y-4 hover:border-slate-700 transition-colors flex flex-col justify-between"
+                    className="flex flex-col justify-between space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_6px_18px_rgba(15,23,42,0.035)] transition-all hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-lg"
                   >
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <Building2 className="w-4 h-4 text-indigo-400" />
-                          <h3 className="text-sm font-bold text-white">{pub.source}</h3>
+                          <Building2 className="h-4 w-4 text-indigo-600" />
+                          <h3 className="text-sm font-bold text-slate-950">{pub.source}</h3>
                         </div>
-                        <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">
+                        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-semibold text-slate-600">
                           {pub.articleCount} {pub.articleCount === 1 ? "article" : "articles"}
                         </span>
                       </div>
 
                       <div className="flex items-center space-x-2">
-                        <span className="text-xs text-slate-400">Tone:</span>
+                        <span className="text-xs font-medium text-slate-500">Tone</span>
                         <span
                           className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ${
                             isPos
                               ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                               : isNeg
                               ? "bg-rose-500/10 text-rose-400 border border-rose-500/20"
-                              : "bg-slate-800 text-slate-300 border border-slate-700"
+                              : "bg-slate-100 text-slate-700 border border-slate-200"
                           }`}
                         >
                           {isPos ? (
@@ -270,17 +271,17 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
                       </div>
 
                       <div>
-                        <span className="text-[11px] font-mono uppercase text-slate-400 block mb-1">
-                          Narrative Framing
+                        <span className="mb-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
+                          Framing
                         </span>
-                        <p className="text-xs text-slate-300 bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80 leading-relaxed">
+                        <p className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-xs leading-relaxed text-slate-600">
                           {pub.narrativeFraming}
                         </p>
                       </div>
 
                       {pub.keyEntities.length > 0 && (
                         <div>
-                          <span className="text-[11px] font-mono uppercase text-slate-400 block mb-1.5">
+                          <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
                             Key Entities Emphasized
                           </span>
                           <div className="flex flex-wrap gap-1">
@@ -293,12 +294,12 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
 
                       {pub.sampleHeadlines.length > 0 && (
                         <div>
-                          <span className="text-[11px] font-mono uppercase text-slate-400 block mb-1">
+                          <span className="mb-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
                             Sample Headlines
                           </span>
                           <ul className="space-y-1">
                             {pub.sampleHeadlines.map((hl, i) => (
-                              <li key={i} className="text-xs text-slate-300 line-clamp-2 italic">
+                              <li key={i} className="line-clamp-2 text-xs italic text-slate-600">
                                 • {hl}
                               </li>
                             ))}
@@ -309,9 +310,9 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
 
                     <button
                       onClick={() => onAskAI(`Compare the editorial tone of ${pub.source} on ${topic} with other news outlets.`)}
-                      className="mt-3 w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center space-x-1.5"
+                      className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white py-2.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
                     >
-                      <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                      <Sparkles className="h-3.5 w-3.5 text-indigo-600" />
                       <span>Investigate in AI Assistant</span>
                     </button>
                   </div>
@@ -324,4 +325,3 @@ export const ComparisonView: React.FC<ComparisonViewProps> = ({
     </div>
   );
 };
-

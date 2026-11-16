@@ -3,9 +3,25 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    color-scheme: light;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    @apply bg-[#f5f6f8] text-slate-900;
+    margin: 0;
+    min-width: 320px;
   }
+
+  button, input, select {
+    font: inherit;
+  }
+
   code, pre {
     font-family: 'JetBrains Mono', monospace;
   }
@@ -15,17 +31,26 @@
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #f1f5f9;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #cbd5e1;
   border-radius: 9999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #94a3b8;
 }
 
+::selection {
+  background: #c7d2fe;
+  color: #172554;
+}
+
+.surface-card {
+  @apply rounded-2xl border border-slate-200/80 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)];
+}
+
+.eyebrow {
+  @apply text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500;
+}

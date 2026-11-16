@@ -3,14 +3,12 @@ import { Navbar } from "./components/Navbar";
 import { Dashboard } from "./pages/Dashboard";
 import { TrendsView } from "./pages/TrendsView";
 import { ComparisonView } from "./pages/ComparisonView";
-import { FeedModal } from "./components/FeedModal";
 import { AIChatDrawer } from "./components/AIChatDrawer";
 import { triggerIngest } from "./services/api";
 import { EntityType } from "./components/EntityTag";
 
 export function App() {
   const [activeTab, setActiveTab] = useState<"dashboard" | "trends" | "comparison">("dashboard");
-  const [isFeedModalOpen, setIsFeedModalOpen] = useState(false);
   const [isChatDrawerOpen, setIsChatDrawerOpen] = useState(false);
   const [chatInitialPrompt, setChatInitialPrompt] = useState<string>("");
   const [comparisonTopic, setComparisonTopic] = useState<string>("Tech");
@@ -47,23 +45,22 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-[#f5f6f8] text-slate-900 flex flex-col font-sans">
       <Navbar
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        onOpenFeedModal={() => setIsFeedModalOpen(true)}
         onToggleChatDrawer={() => setIsChatDrawerOpen(!isChatDrawerOpen)}
         onSyncFeeds={handleSyncFeeds}
         isSyncing={isSyncing}
       />
 
       {syncNotice && (
-        <div className="bg-indigo-600/20 border-b border-indigo-500/30 px-4 py-2 text-center text-xs font-medium text-indigo-300 animate-in fade-in">
+        <div className="bg-emerald-50 border-b border-emerald-200 px-4 py-2.5 text-center text-xs font-semibold text-emerald-800 animate-in fade-in">
           {syncNotice}
         </div>
       )}
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 w-full max-w-[1440px] mx-auto px-4 sm:px-7 lg:px-10 py-8">
         {activeTab === "dashboard" && (
           <Dashboard
             onSelectEntity={handleSelectEntity}
@@ -71,14 +68,12 @@ export function App() {
             onCompareTopic={handleCompareTopic}
           />
         )}
-
         {activeTab === "trends" && (
           <TrendsView
             onSelectEntity={handleSelectEntity}
             onCompareTopic={handleCompareTopic}
           />
         )}
-
         {activeTab === "comparison" && (
           <ComparisonView
             initialTopic={comparisonTopic}
@@ -87,14 +82,14 @@ export function App() {
         )}
       </main>
 
-      <footer className="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-400">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <footer className="mt-10 border-t border-slate-200 bg-white py-5 text-xs text-slate-500">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-7 lg:px-10 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center space-x-2">
-            <span className="font-bold text-white">NewsPulse</span>
-            <span className="text-slate-500">|</span>
+            <span className="font-bold text-slate-900">NewsPulse</span>
+            <span className="text-slate-300">|</span>
             <span>AI News Intelligence & Trend Explorer</span>
           </div>
-          <div className="flex items-center space-x-4 font-mono text-[11px] text-slate-400">
+          <div className="flex items-center space-x-3 font-mono text-[10px] uppercase tracking-wider text-slate-400">
             <span>FastAPI + ChromaDB</span>
             <span>•</span>
             <span>Express + Prisma</span>
@@ -103,15 +98,6 @@ export function App() {
           </div>
         </div>
       </footer>
-
-      <FeedModal
-        isOpen={isFeedModalOpen}
-        onClose={() => setIsFeedModalOpen(false)}
-        onSyncComplete={() => {
-          setSyncNotice("Feed sources updated and synchronized.");
-          setTimeout(() => setSyncNotice(null), 3000);
-        }}
-      />
 
       <AIChatDrawer
         isOpen={isChatDrawerOpen}
@@ -123,4 +109,3 @@ export function App() {
 }
 
 export default App;
-

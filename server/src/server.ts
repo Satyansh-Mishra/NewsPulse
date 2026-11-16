@@ -5,7 +5,6 @@ import articleRoutes from "./routes/articleRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import { connectPrisma, disconnectPrisma } from "./config/prisma.js";
 import {
-  seedDefaultFeeds,
   startIngestionScheduler,
   stopIngestionScheduler,
   ingestAllFeeds
@@ -37,7 +36,6 @@ app.use((_req: Request, res: Response) => {
 async function bootstrap() {
   try {
     await connectPrisma();
-    await seedDefaultFeeds();
     startIngestionScheduler("*/30 * * * *");
 
     setTimeout(async () => {

@@ -1,20 +1,73 @@
 import axios from "axios";
-import {
-  ArticlesResponse,
-  TrendData,
-  ComparisonData,
-  FeedSource,
-  Citation
-} from "../types";
 
-const API_BASE = import.meta.env.VITE_API_URL || "/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
 const api = axios.create({
-  baseURL: API_BASE,
+  baseURL: API_BASE_URL,
   headers: {
-    "Content-Type": "application/json"
-  }
+    "Content-Type": "application/json",
+  },
 });
+
+export interface Article {
+  id: string;
+  title: string;
+  url: string;
+  source: string;
+  publishedAt: string;
+  summary: string | null;
+  content: string;
+  sentiment: "positive" | "neutral" | "negative";
+  sentimentScore: number;
+  entities: ArticleEntities;
+  topicLabel?: string;
+  category?: string;
+  createdAt?: string;
+}
+
+export interface ArticleEntities {
+  PERSON?: string[];
+  ORG?: string[];
+  GPE?: string[];
+  DATE?: string[];
+}
+
+export interface FeedSource {
+  id: string;
+  name: string;
+  url: string;
+  category: string;
+  active: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ChatResponse {
+  query: string;
+  answer: string;
+  citations: Citation[];
+  confidence_score: number;
+}
+
+export interface Citation {
+  citation_id: number;
+  article_id: string;
+  title: string;
+  source: string;
+  url?: string;
+  published_at?: string;
+  similarity_score: number;
+  excerpt: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  citations?: Citation[];
+  timestamp: Date;
+  confidence?: number;
+}
 
 export interface FetchArticlesParams {
   page?: number;
@@ -26,55 +79,54 @@ export interface FetchArticlesParams {
   source?: string;
 }
 
-export async function fetchArticles(params: FetchArticlesParams = {}): Promise<ArticlesResponse> {
-  const response = await api.get<ArticlesResponse>("/articles", { params });
+export async function fetchArticles(params: FetchArticlesParams = {}): Promise<any> {
+  const response = await api.get<any>("/articles", { params });
   return response.data;
 }
 
-export async function fetchTrends(): Promise<TrendData> {
-  const response = await api.get<TrendData>("/trends");
+export async function fetchTrends(): Promise<any> {
+  const response = await api.get<any>("/trends");
   return response.data;
 }
 
-export async function fetchComparison(topic: string): Promise<ComparisonData> {
-  const response = await api.get<ComparisonData>(`/compare/${encodeURIComponent(topic)}`);
+export async function fetchComparison(topic: string): Promise<any> {
+  const response = await api.get<any>(`/compare/${encodeURIComponent(topic)}`);
   return response.data;
 }
 
-export interface ChatResponse {
+export interface ChatResponseData {
   query: string;
   answer: string;
   citations: Citation[];
   confidence_score: number;
 }
 
-export async function queryAIChat(query: string, topK: number = 5): Promise<ChatResponse> {
-  const response = await api.post<ChatResponse>("/chat", { query, top_k: topK });
+export async function queryAIChat(query: string, history: ChatMessage[] = [], topK: number = 5): Promise<ChatResponseData> {
+  const response = await api.post<ChatResponseData>("/chat", { query, history, top_k: topK });
   return response.data;
 }
 
-export async function triggerIngest(): Promise<{ success: boolean; message: string; result?: any }> {
-  const response = await api.post("/ingest");
+export async function triggerIngest(): Promise<any> {
+  const response = await api.post<any>("/ingest");
   return response.data;
 }
 
-export async function fetchFeeds(): Promise<{ feeds: FeedSource[] }> {
-  const response = await api.get<{ feeds: FeedSource[] }>("/feeds");
+export async function fetchFeeds(): Promise<any> {
+  const response = await api.get<any>("/feeds");
   return response.data;
 }
 
-export async function addFeed(data: { name: string; url: string; category: string }): Promise<{ success: boolean; feed: FeedSource }> {
-  const response = await api.post<{ success: boolean; feed: FeedSource }>("/feeds", data);
+export async function addFeed(data: { name: string; url: string; category: string }): Promise<any> {
+  const response = await api.post<any>("/feeds", data);
   return response.data;
 }
 
-export async function toggleFeed(id: string): Promise<{ success: boolean; feed: FeedSource }> {
-  const response = await api.patch<{ success: boolean; feed: FeedSource }>(`/feeds/${id}`);
+export async function toggleFeed(id: string): Promise<any> {
+  const response = await api.patch<any>(`/feeds/${id}`);
   return response.data;
 }
 
-export async function deleteFeed(id: string): Promise<{ success: boolean }> {
-  const response = await api.delete<{ success: boolean }>(`/feeds/${id}`);
+export async function deleteFeed(id: string): Promise<any> {
+  const response = await api.delete<any>(`/feeds/${id}`);
   return response.data;
 }
-
